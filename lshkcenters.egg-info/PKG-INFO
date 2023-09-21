@@ -1,0 +1,67 @@
+Metadata-Version: 2.1
+Name: lshkcenters
+Version: 1.0.3
+Summary: A python package for LSH-k-Centers algorithm
+Home-page: https://github.com/
+Author: toanstt
+Author-email: toan_stt@yahoo.com
+License: UNKNOWN
+Description: Python implementations of the LSH-k-Centers algorithms for clustering categorical data:
+        
+        ## Installation:
+        ### Using pip: 
+        ```shell
+        pip install lshkcenters
+        ```
+        
+        ### Import the packages:
+        ```shell
+        import numpy as np
+        from LSHkCenters.LSHkCenters import LSHkCenters
+        ```
+        ### Generate a simple categorical dataset:
+        
+        ```shell
+        X = np.array([[0,0,0],[0,1,1],[0,0,0],[1,0,1],[2,2,2],[2,3,2],[2,3,2]])
+        y = np.array([0,0,0,0,1,1,1])
+        ```
+        
+        ### LSH-k-Centers: 
+        
+        ```shell
+        kcens = LSHkCenters(X,y,n_init=5,k=2)
+        kcens.SetupLSH()
+        kcens.DoCluster()
+        
+        ```
+        
+        ### Built-in evaluattion metrics:
+        ```shell
+        kcens.CalcScore()
+        ```
+        
+        ### Out come:
+        ```shell
+        Purity: 1.000 NMI: 1.00 ARI: 1.00 Sil:  -1.00 Acc: 1.00 Recall: 1.00 Precision: 1.00
+        ```
+        
+        ### Built-in fuzzy evaluattion metrics:
+        ```shell
+        kcens.CalcFuzzyScore()
+        ```
+        
+        ### Out come:
+        ```shell
+        Fuzzy scores PC:1.00 NPC:1.00 FHVâ†“:0.02 FSâ†“:-2000.00 XBâ†“:0.11 BHâ†“:0.06 BWS:-2000.00 FPC:3.50 SIL_R:0.70 FSIL:0.70 MPO:12.15 NPE:0.01 PE:0.01 PEB:0.01
+        ```
+        
+        
+        ## References:
+        *To be updated*
+        
+Platform: UNKNOWN
+Classifier: Programming Language :: Python :: 3
+Classifier: License :: OSI Approved :: MIT License
+Classifier: Operating System :: OS Independent
+Requires-Python: >=3.6
+Description-Content-Type: text/markdown
