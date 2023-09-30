@@ -1,0 +1,8 @@
+toansttlib
+termcolor
+numpy
+numpy
+scikit-learn
+kmodes
+matplotlib
+networkx

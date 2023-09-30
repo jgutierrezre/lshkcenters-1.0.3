@@ -48,3 +48,7 @@ coverage.xml
 
 # Sphinx documentation
 docs/_build/
+
+# Results
+RESULT
+saved_dist_matrices
