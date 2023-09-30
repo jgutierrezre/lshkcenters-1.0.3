@@ -13,10 +13,11 @@ class DILCA(BaseMeasure):
         print("Generating disMatrix for DILCA")
         for i in range(len(self.X[0])):
             self.max.append(max(self.X[:, i]))
-        self.ComputeEntropy(self.X)
+        self.compute_entropy(self.X)
+        
         # self.SavedistMatrix()
 
-    def ProconditionMatrixYX(
+    def procondition_matrix_YX(
         self, Y: np.ndarray, X: np.ndarray, Y_unique: np.ndarray, X_unique: np.ndarray
     ) -> np.ndarray:
         lenData = len(Y)
@@ -36,7 +37,7 @@ class DILCA(BaseMeasure):
                 MATRIX[y][x] = count_y / count_x if count_x > 0 else 0
         return MATRIX
 
-    def ComputeEntropy(self, X: np.ndarray) -> None:
+    def compute_entropy(self, X: np.ndarray) -> None:
         N = len(X)
         D = len(X[0])
         context_array = [[] for _ in range(D)]
@@ -57,7 +58,7 @@ class DILCA(BaseMeasure):
                     X_unique, X_freq = np.unique(X_, return_counts=True)
                     X_property = [ii / len(X_) for ii in X_freq]
                     HX = st.entropy(X_property, base=2)
-                    conditionMatrix = self.ProconditionMatrixYX(
+                    conditionMatrix = self.procondition_matrix_YX(
                         Y_, X_, Y_unique, X_unique
                     )
                     self.conditionProMatrix[(i, j)] = conditionMatrix

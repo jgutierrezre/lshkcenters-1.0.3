@@ -8,7 +8,7 @@ class LSH(BaseHashing):
     def __init__(self, *args, **kwargs) -> None:
         super().__init__(*args, **kwargs)
 
-    def ComputeHashValue(self, x):
+    def compute_hash_value(self, x):
         val = 0
         for i in range(self.hbits):
             partitions = self.partitions[self.bit_indexes[i]]
@@ -17,20 +17,28 @@ class LSH(BaseHashing):
                 val += 1
         return val
 
-    def GenerateHashTable(self) -> None:
+    def generate_hash_table(self) -> None:
         print(
             f"Generating LSH hash table: hbits: {self.hbits}({2**self.hbits}) k {self.k} d {self.d} n={self.n}"
         )
-        self.hash_values = [self.ComputeHashValue(x) for x in self.X]
+        self.hash_values = [self.compute_hash_value(x) for x in self.X]
         self.hashTable = defaultdict(list)
         for i in range(self.n):
             self.hashTable[self.hash_values[i]].append(i)
 
-    def DoHash(self) -> None:
-        self.measure.GenerateSimilarityMatrix()
-        self.GenerateSimilarityMatrix(self.measure.simMatrix)
+    def do_hash(self) -> None:
+        self.measure.generate_similarity_matrix()
+        self.generate_similarity_matrix(self.measure.simMatrix)
         self.bit_indexes = np.argpartition(self.cut_values_normal, self.hbits)[
             : self.hbits
         ]
-        self.GenerateHashTable()
+        self.generate_hash_table()
         print(self.hash_values)
+
+    def hamming_distance(self, x, y) -> float:
+        ans = 0
+        for i in range(31, -1, -1):
+            b1 = x >> i & 1
+            b2 = y >> i & 1
+            ans += not (b1 == b2)
+        return ans

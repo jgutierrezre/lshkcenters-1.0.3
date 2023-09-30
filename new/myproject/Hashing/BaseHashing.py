@@ -91,7 +91,7 @@ class BaseHashing:
                 f"Class '{measure_name}' not found in module '{measure_name}'!"
             )
 
-    def GenerateSimilarityMatrix(self, simMatrix) -> None:
+    def generate_similarity_matrix(self, simMatrix) -> None:
         self.partitions = []
         self.cut_values = []
         self.cut_values_normal = []

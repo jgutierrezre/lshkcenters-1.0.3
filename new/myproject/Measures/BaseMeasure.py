@@ -31,7 +31,7 @@ class BaseMeasure:
         if y.ndim != 1:
             raise ValueError("y must have only one row.")
 
-    def GenerateSimilarityMatrix(self) -> None:
+    def generate_similarity_matrix(self) -> None:
         for di in range(self.d):
             matrix2D = []  # 2D array for 1 dimension
             for i in range(self.D[di]):
