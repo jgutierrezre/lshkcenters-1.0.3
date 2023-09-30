@@ -52,3 +52,6 @@ docs/_build/
 # Results
 RESULT
 saved_dist_matrices
+
+# VSCode settings
+.vscode/
