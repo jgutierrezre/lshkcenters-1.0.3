@@ -70,10 +70,10 @@ class BaseHashing:
         if n_init <= 0:
             raise ValueError("n_init must be greater than 0.")
 
-        if hbits and hbits <= 0:
+        if hbits is not None and hbits <= 0:
             raise ValueError("hbits must be greater than 0.")
 
-        if k and k <= 0:
+        if k is not None and k <= 0:
             raise ValueError("k must be greater than 0.")
 
         if measure_name not in MeasureManager.MEASURE_LIST:
