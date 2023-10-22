@@ -1,22 +1,40 @@
 from .MeasureManager import MeasureManager
 
+from typing import Union
+
 import numpy as np
 import os
 import json
 
 
 class BaseMeasure:
-    def __init__(self, X: np.ndarray, y: np.ndarray) -> None:
+    def __init__(
+        self,
+        X: np.ndarray,
+        y: np.ndarray,
+        n: Union[None, int] = None,
+        d: Union[None, int] = None,
+        D: Union[None, np.ndarray] = None,
+    ) -> None:
         self._check_args(X, y)
 
         self.X = X
         self.y = y
 
-        self.d = len(self.X[0])
-        self.D = [len(np.unique(self.X[:, i])) for i in range(self.d)]
+        if n is None:
+            self.n = self.X.shape[0]
+        else:
+            self.n = n
 
-        self.distMatrix = []
-        self.simMatrix = []
+        if d is None:
+            self.d = self.X.shape[1]
+        else:
+            self.d = d
+
+        if D is None:
+            self.D = np.apply_along_axis(lambda x: len(np.unique(x)), 0, self.X)
+        else:
+            self.D = D
 
     def _check_args(self, X: np.ndarray, y: np.ndarray) -> None:
         if X.size == 0:
@@ -31,18 +49,26 @@ class BaseMeasure:
         if y.ndim != 1:
             raise ValueError("y must have only one row.")
 
-    def generate_similarity_matrix(self) -> None:
+    def generate_dist_matrix(self) -> np.ndarray:
+        raise NotImplementedError()
+
+    def generate_similarity_matrices(self) -> list:
+        dist_matrix = self.generate_dist_matrix()
+        print("dist_matrix", dist_matrix)
+        sim_matrix = []
+
         for di in range(self.d):
             matrix2D = []  # 2D array for 1 dimension
             for i in range(self.D[di]):
                 matrix1D = []  # 1D array for 1 dimension
                 for j in range(self.D[di]):
-                    # matrix_tmp = 1-self.distMatrix[di][i][j]
-                    if self.distMatrix[di][i][j] == 0:
+                    if dist_matrix[di][i][j] == 0:
                         matrix_tmp = 10000
                     else:
-                        matrix_tmp = 1 / self.distMatrix[di][i][j]
+                        matrix_tmp = 1 / dist_matrix[di][i][j]
 
                     matrix1D.append(matrix_tmp)
                 matrix2D.append(matrix1D)
-            self.simMatrix.append(matrix2D)
+            sim_matrix.append(matrix2D)
+
+        return sim_matrix

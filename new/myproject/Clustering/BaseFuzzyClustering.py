@@ -20,13 +20,15 @@ class BaseFuzzyClustering:
         self.X = X
         self.y = y
 
-        self.n = X.shape[0]
-        self.d = X.shape[1]
-        self.D = [len(np.unique(X[:, i])) for i in range(self.d)]
-        
+        self.n = X.shape[0]  # number of instances
+        self.d = X.shape[1]  # number of attributes
+        self.D = np.apply_along_axis(
+            lambda x: len(np.unique(x)), 0, self.X
+        )  # number of unique values of each attribute
+
         self.alpha = alpha
         self.power = float(1 / (self.alpha - 1))
-        
+
         if n_iter is None:
             self.n_iter = Defaults.n_iter
         else:
@@ -97,5 +99,7 @@ class BaseFuzzyClustering:
         m = np.zeros((self.k, self.k))
         for i in range(self.k):
             for j in range(self.k):
-                m[i][j] = self.distance_representative_to_representative(v1[i], v2[j]) ** 2
+                m[i][j] = (
+                    self.distance_representative_to_representative(v1[i], v2[j]) ** 2
+                )
         return m

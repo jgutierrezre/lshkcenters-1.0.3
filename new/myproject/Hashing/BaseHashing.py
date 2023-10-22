@@ -14,6 +14,9 @@ class BaseHashing:
         self,
         X: np.ndarray,
         y: np.ndarray,
+        n: Union[None, int] = None,
+        d: Union[None, int] = None,
+        D: Union[None, np.ndarray] = None,
         n_init: int = 10,
         hbits: Union[None, int] = None,
         k: Union[None, int] = None,
@@ -24,11 +27,21 @@ class BaseHashing:
         self.X = X
         self.y = y
         self.n_init = n_init
-        self.measure = self._load_measure(measure_name)
 
-        self.n = self.X.shape[0]
-        self.d = self.X.shape[1]
-        self.D = np.apply_along_axis(lambda x: len(np.unique(x)), 0, self.X)
+        if n is None:
+            self.n = self.X.shape[0]
+        else:
+            self.n = n
+
+        if d is None:
+            self.d = self.X.shape[1]
+        else:
+            self.d = d
+
+        if D is None:
+            self.D = np.apply_along_axis(lambda x: len(np.unique(x)), 0, self.X)
+        else:
+            self.D = D
 
         if k is None:
             self.k = len(np.unique(y))
@@ -45,6 +58,8 @@ class BaseHashing:
                     f"WARNING: BAD HBITS: hbits={self.hbits} d={self.d} nbucket={2**self.hbits} k={self.k} n={self.n}"
                 )
             self.hbits = hbits
+            
+        self.measure = self._load_measure(measure_name)
 
     def _check_args(
         self,
@@ -83,7 +98,7 @@ class BaseHashing:
         try:
             module = importlib.import_module(f"..Measures.{measure_name}", __package__)
             measure_class = getattr(module, measure_name)
-            return measure_class(self.X, self.y)
+            return measure_class(X=self.X, y=self.y, n=self.n, d=self.d, D=self.D)
         except ImportError:
             raise ValueError(f"Measure '{measure_name}' not found!")
         except AttributeError:
@@ -91,10 +106,10 @@ class BaseHashing:
                 f"Class '{measure_name}' not found in module '{measure_name}'!"
             )
 
-    def generate_similarity_matrix(self, simMatrix: list) -> None:
-        self.partitions = []
-        self.cut_values = []
-        self.cut_values_normal = []
+    def generate_similarity_matrix(self, simMatrix: list) -> tuple[list, list, list]:
+        partitions = []
+        cut_values = []
+        cut_values_normal = []
         for di in range(self.d):
             G = nx.Graph()
             for i in range(self.D[di]):
@@ -102,13 +117,15 @@ class BaseHashing:
                     G.add_edge(i, j, weight=simMatrix[di][i][j])
             if len(G.nodes) > 1:
                 ut_value, partition = nx.stoer_wagner(G)
-                self.partitions.append(partition)
-                self.cut_values.append(ut_value)
-                self.cut_values_normal.append(ut_value / self.D[di])
+                partitions.append(partition)
+                cut_values.append(ut_value)
+                cut_values_normal.append(ut_value / self.D[di])
             else:
-                self.partitions.append([[0], [0]])
-                self.cut_values.append(10000000)
-                self.cut_values_normal.append(10000000)
+                partitions.append([[0], [0]])
+                cut_values.append(10000000)
+                cut_values_normal.append(10000000)
+
+        return partitions, cut_values, cut_values_normal
 
     def hamming_distance(self, x, y) -> float:
         ans = 0
