@@ -28,7 +28,7 @@ class BaseHashing:
 
         self.n = self.X.shape[0]
         self.d = self.X.shape[1]
-        self.D = [len(np.unique(self.X[:, i])) for i in range(self.d)]
+        self.D = np.apply_along_axis(lambda x: len(np.unique(x)), 0, self.X)
 
         if k is None:
             self.k = len(np.unique(y))
@@ -91,7 +91,7 @@ class BaseHashing:
                 f"Class '{measure_name}' not found in module '{measure_name}'!"
             )
 
-    def generate_similarity_matrix(self, simMatrix) -> None:
+    def generate_similarity_matrix(self, simMatrix: list) -> None:
         self.partitions = []
         self.cut_values = []
         self.cut_values_normal = []
@@ -109,3 +109,11 @@ class BaseHashing:
                 self.partitions.append([[0], [0]])
                 self.cut_values.append(10000000)
                 self.cut_values_normal.append(10000000)
+
+    def hamming_distance(self, x, y) -> float:
+        ans = 0
+        for i in range(31, -1, -1):
+            b1 = x >> i & 1
+            b2 = y >> i & 1
+            ans += not (b1 == b2)
+        return ans
