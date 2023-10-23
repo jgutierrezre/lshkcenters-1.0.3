@@ -34,10 +34,10 @@ class LSH(BaseHashing):
     def do_hash(self) -> None:
         similarity_matrices = self.measure.generate_similarity_matrices()
 
-        partitions, cut_values, cut_values_normal = self.generate_similarity_matrix(
-            similarity_matrices
-        )
+        # partitions, cut_values, cut_values_normal = self.generate_similarity_matrix(
+        #     similarity_matrices
+        # )
 
-        bit_indexes = np.argpartition(cut_values_normal, self.hbits)[: self.hbits]
-        hash_table, hash_values = self.generate_hash_table(partitions, bit_indexes)
-        print(hash_values)
+        # bit_indexes = np.argpartition(cut_values_normal, self.hbits)[: self.hbits]
+        # hash_table, hash_values = self.generate_hash_table(partitions, bit_indexes)
+        # print(hash_values)

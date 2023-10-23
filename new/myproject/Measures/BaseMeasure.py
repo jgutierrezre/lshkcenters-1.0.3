@@ -49,12 +49,11 @@ class BaseMeasure:
         if y.ndim != 1:
             raise ValueError("y must have only one row.")
 
-    def generate_dist_matrix(self) -> np.ndarray:
+    def generate_dist_matrices(self) -> np.ndarray:
         raise NotImplementedError()
 
     def generate_similarity_matrices(self) -> list:
-        dist_matrix = self.generate_dist_matrix()
-        print("dist_matrix", dist_matrix)
+        dist_matrix = self.generate_dist_matrices()
         sim_matrix = []
 
         for di in range(self.d):
