@@ -3,8 +3,6 @@ from .MeasureManager import MeasureManager
 from typing import Union
 
 import numpy as np
-import os
-import json
 
 
 class BaseMeasure:
