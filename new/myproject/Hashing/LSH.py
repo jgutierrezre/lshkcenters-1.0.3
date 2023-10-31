@@ -32,8 +32,9 @@ class LSH(BaseHashing):
         print("partitions\n", partitions)
         print("cut_values_normal\n", cut_values_normal)
 
+        # TODO: Double check the paper to see what cut this refers to. It works as it is, but this currently takes the lowest hbits cut values.
         # Get the hbits attribute indexes with the highest cut values.
-        bit_indices = np.argpartition(cut_values_normal, -self.hbits)[-self.hbits :]
+        bit_indices = np.argpartition(cut_values_normal, self.hbits)[: self.hbits]
         print("bit_indices\n", bit_indices)
 
         # Compute the hash table.
@@ -108,3 +109,27 @@ class LSH(BaseHashing):
         hash_table = dict(hash_table)
 
         return hash_table
+
+    # def _generate_hash_table(
+    #     self, partitions: list, bit_indexes: np.ndarray
+    # ) -> tuple[dict, list]:
+    #     print(
+    #         f"Generating LSH hash table: hbits: {self.hbits}({2**self.hbits}) k {self.k} d {self.d} n={self.n}"
+    #     )
+    #     hash_values = [
+    #         self._compute_hash_value(x, partitions, bit_indexes) for x in self.X
+    #     ]
+
+    #     hash_table = defaultdict(list)
+    #     for idx, hash_val in enumerate(hash_values):
+    #         hash_table[hash_val].append(idx)
+
+    #     return hash_table, hash_values
+
+    # def _compute_hash_value(self, x, partitions: list, bit_indexes: np.ndarray) -> int:
+    #     val = 0
+    #     for i in range(self.hbits):
+    #         val <<= 1
+    #         if x[bit_indexes[i]] in partitions[bit_indexes[i]][1]:
+    #             val += 1
+    #     return val
