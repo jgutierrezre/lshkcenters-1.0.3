@@ -109,7 +109,7 @@ class LSHkCenters(BaseFuzzyClustering):
                 # timeit.default_timer() - start_time2,
             )
             results.append(re)
-        all_centers, all_u, all_costs, all_n_iters, all_time = zip(*results)
+        all_centers, all_u, all_costs, all_n_iters = zip(*results)
         best = np.argmin(all_costs)
         self.iter = all_n_iters[best]
         self.u = all_u[best]
@@ -122,7 +122,10 @@ class LSHkCenters(BaseFuzzyClustering):
         return self.labels
 
     def init_clusterLSH_fuzzymembership(self, n_group):
-        buckets = [(k, len(self.lsh.hashTable[k])) for k in self.lsh.hashTable.keys()]
+        buckets = [
+            (k, len(self.lsh.get_hash_table()[k]))
+            for k in self.lsh.get_hash_table().keys()
+        ]
         buckets2 = sorted(buckets, key=lambda x: -x[-1])
         buckets_map_to_centroids = {}
         masterkeys = []
@@ -137,7 +140,7 @@ class LSHkCenters(BaseFuzzyClustering):
         dist_from_master_to_other = [
             [
                 self.lsh.hamming_distance(keymaster, key)
-                for key in self.lsh.hashTable.keys()
+                for key in self.lsh.get_hash_table().keys()
             ]
             for keymaster in masterkeys
         ]
@@ -165,12 +168,12 @@ class LSHkCenters(BaseFuzzyClustering):
         self.u = np.zeros((self.n, self.k))
         distall_sum = np.zeros((self.n))
         d_temp_array = np.zeros((self.k))
-        for key_id, key in enumerate(self.lsh.hashTable.keys()):
+        for key_id, key in enumerate(self.lsh.get_hash_table().keys()):
             for keymaster_id, value in enumerate(masterkeys):
                 d_temp_array[keymaster_id] = dist_from_master_to_other[keymaster_id][
                     key_id
                 ]
-            for i in self.lsh.hashTable[key]:
+            for i in self.lsh.get_hash_table()[key]:
                 self.distall_tmp[i] = d_temp_array
         for i in range(self.n):
             for ki in range(self.k):

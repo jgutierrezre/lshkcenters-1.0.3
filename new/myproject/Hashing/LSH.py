@@ -9,14 +9,16 @@ class LSH(BaseHashing):
     def __init__(self, *args, **kwargs) -> None:
         super().__init__(*args, **kwargs)
 
-    def _generate_similarity_graph(self, similarity_matrices: list) -> tuple[list, np.ndarray, np.ndarray]:
+    def _generate_similarity_graph(
+        self, similarity_matrices: list
+    ) -> tuple[list, np.ndarray, np.ndarray]:
         """
-        Generate similarity graph using provided similarity matrices. 
+        Generate similarity graph using provided similarity matrices.
         Uses Stoer-Wagner algorithm to find the maximum cuts on the graphs.
         """
-        
+
         partitions = []
-        
+
         cut_values = np.full((self.d), np.inf, dtype=float)
         cut_values_normal = np.full((self.d), np.inf, dtype=float)
 
@@ -24,7 +26,7 @@ class LSH(BaseHashing):
         for i, matrix in enumerate(similarity_matrices):
             # Create graph G
             G = nx.from_numpy_array(np.triu(matrix, 1))
-            
+
             # If there's more than 1 node, compute the cut
             if len(G.nodes) > 1:
                 ut_value, partition = nx.stoer_wagner(G)
@@ -45,9 +47,10 @@ class LSH(BaseHashing):
         hash_values = [
             self._compute_hash_value(x, partitions, bit_indexes) for x in self.X
         ]
+
         hash_table = defaultdict(list)
-        for i in range(self.n):
-            hash_table[hash_values[i]].append(i)
+        for idx, hash_val in enumerate(hash_values):
+            hash_table[hash_val].append(idx)
 
         return hash_table, hash_values
 
@@ -70,6 +73,13 @@ class LSH(BaseHashing):
         print("cut_values\n", cut_values)
         print("cut_values_normal\n", cut_values_normal)
 
-        # bit_indexes = np.argpartition(cut_values_normal, self.hbits)[: self.hbits]
-        # hash_table, hash_values = self._generate_hash_table(partitions, bit_indexes)
-        # print(hash_values)
+        # TODO: Check if the hash calculation is correct, this doesn't match the paper
+        bit_indexes = np.argpartition(cut_values_normal, self.hbits)[: self.hbits]
+        print("bit_indexes\n", bit_indexes)
+
+        hash_table, hash_values = self._generate_hash_table(partitions, bit_indexes)
+        print("hash_table\n", hash_table)
+        print("hash_values\n", hash_values)
+
+        self._hash_table = hash_table
+        self._hash_values = hash_values

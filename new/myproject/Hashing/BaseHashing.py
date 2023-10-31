@@ -47,7 +47,7 @@ class BaseHashing:
             self.k = k
 
         if hbits is None:
-            self.hbits = np.ceil(np.log2(self.k + 1))
+            self.hbits = int(np.ceil(np.log2(self.k + 1)))
             if self.hbits >= self.d:
                 self.hbits = self.d - 1
         else:
@@ -58,7 +58,10 @@ class BaseHashing:
             self.hbits = hbits
 
         self.measure = self._load_measure(measure_name)
-        
+
+        self._hash_table: Union[dict, None] = None
+        self._hash_values: Union[list, None] = None
+
         self._init_hash()
 
     def _check_args(
@@ -105,7 +108,7 @@ class BaseHashing:
             raise ValueError(
                 f"Class '{measure_name}' not found in module '{measure_name}'!"
             )
-            
+
     def _init_hash(self) -> None:
         raise NotImplementedError()
 
@@ -116,3 +119,13 @@ class BaseHashing:
             b2 = y >> i & 1
             ans += not (b1 == b2)
         return ans
+
+    def get_hash_table(self) -> dict:
+        if self._hash_table is None:
+            raise ValueError("Hash table not generated yet!")
+        return self._hash_table
+
+    def get_hash_values(self) -> list:
+        if self._hash_values is None:
+            raise ValueError("Hash values not generated yet!")
+        return self._hash_values
