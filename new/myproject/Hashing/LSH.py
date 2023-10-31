@@ -32,7 +32,7 @@ class LSH(BaseHashing):
         return hash_table, hash_values
 
     def do_hash(self) -> None:
-        similarity_matrices = self.measure.generate_similarity_matrices()
+        similarity_matrices = self.measure.get_similarity_matrices()
 
         # partitions, cut_values, cut_values_normal = self.generate_similarity_matrix(
         #     similarity_matrices

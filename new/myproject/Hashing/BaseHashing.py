@@ -98,7 +98,7 @@ class BaseHashing:
         try:
             module = importlib.import_module(f"..Measures.{measure_name}", __package__)
             measure_class = getattr(module, measure_name)
-            return measure_class(X=self.X, y=self.y, n=self.n, d=self.d, D=self.D)
+            return measure_class(X=self.X, y=self.y)
         except ImportError:
             raise ValueError(f"Measure '{measure_name}' not found!")
         except AttributeError:

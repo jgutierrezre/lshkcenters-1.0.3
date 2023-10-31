@@ -24,9 +24,6 @@ class LSHkCenters(BaseFuzzyClustering):
         self.lsh = LSH(
             X=self.X,
             y=self.y,
-            n=self.n,
-            d=self.d,
-            D=self.D,
             hbits=hbits,
             measure_name=measure_name,
         )
