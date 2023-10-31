@@ -35,6 +35,10 @@ class DILCA(BaseMeasure):
 
         self._distance_matrices = distance_matrices
 
+        # --------------------------
+        # ALGORITHM 1: computeCorrelationMatrix(D)
+        # --------------------------
+
     def _compute_correlation_matrix(self) -> np.ndarray:
         """
         Compute the symmetrical uncertainty matrix for all attributes.
@@ -86,11 +90,26 @@ class DILCA(BaseMeasure):
 
         return SU_Y_X
 
-    def _DILCA_RR(self) -> None:
+        # --------------------------
+        # ALGORITHM 3: DILCA_RR(VectorSU, Y) (**Not Inmplemented**)
+        # --------------------------
+
+    def _DILCA_RR(self, SU_matrix: np.ndarray) -> list[np.ndarray]:
         """
-        Placeholder for DILCA_RR implementation.
+        (Placeholder for DILCA_RR implementation.)
+        Compute DILCA_RR distance matrices for all attributes.
+        
+        Args:
+            SU_matrix (np.ndarray): Symmetrical Uncertainty matrix.
+
+        Returns:
+            list: List of distance matrices.
         """
         raise NotImplementedError()
+
+        # --------------------------
+        # ALGORITHM 2: DILCA_M(VectorSU_Y, Y, σ)
+        # --------------------------
 
     def _DILCA_M(self, SU_matrix: np.ndarray, sigma: float = 1.0) -> list[np.ndarray]:
         """
@@ -135,6 +154,10 @@ class DILCA(BaseMeasure):
         context_Y_i = np.where((SU_vector_Y >= SU_mean_Y) & mask)[0]
 
         return self._compute_distance_matrix(Y_i, context_Y_i)
+
+        # --------------------------
+        # ALGORITHM 4: DistanceComputation(Y, context(Y))
+        # --------------------------
 
     def _compute_distance_matrix(self, Y_i: int, context_Y_i: np.ndarray) -> np.ndarray:
         """
