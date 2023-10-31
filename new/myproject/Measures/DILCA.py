@@ -179,14 +179,16 @@ class DILCA(BaseMeasure):
         Returns:
             float: Computed distance.
         """
-        diffs = np.array(
-            [
-                self._conditional_probabilities[(Y_i, X_i)][i]
-                - self._conditional_probabilities[(Y_i, X_i)][j]
-                for X_i in context_Y_i
-            ]
+
+        upper = sum(
+            np.sum(
+                np.square(
+                    self._conditional_probabilities[(Y_i, X_i)][i]
+                    - self._conditional_probabilities[(Y_i, X_i)][j]
+                )
+            )
+            for X_i in context_Y_i
         )
-        upper = np.sum(np.square(diffs))
 
         lower = context_Y_i.shape[0]
 
