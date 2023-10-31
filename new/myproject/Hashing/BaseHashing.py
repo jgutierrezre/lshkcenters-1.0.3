@@ -5,8 +5,6 @@ from typing import Union
 
 import importlib
 import numpy as np
-import math
-import networkx as nx
 
 
 class BaseHashing:
@@ -49,7 +47,7 @@ class BaseHashing:
             self.k = k
 
         if hbits is None:
-            self.hbits = math.ceil(math.log2(self.k + 1))
+            self.hbits = np.ceil(np.log2(self.k + 1))
             if self.hbits >= self.d:
                 self.hbits = self.d - 1
         else:
@@ -58,8 +56,10 @@ class BaseHashing:
                     f"WARNING: BAD HBITS: hbits={self.hbits} d={self.d} nbucket={2**self.hbits} k={self.k} n={self.n}"
                 )
             self.hbits = hbits
-            
+
         self.measure = self._load_measure(measure_name)
+        
+        self._init_hash()
 
     def _check_args(
         self,
@@ -105,27 +105,9 @@ class BaseHashing:
             raise ValueError(
                 f"Class '{measure_name}' not found in module '{measure_name}'!"
             )
-
-    def generate_similarity_matrix(self, simMatrix: list) -> tuple[list, list, list]:
-        partitions = []
-        cut_values = []
-        cut_values_normal = []
-        for di in range(self.d):
-            G = nx.Graph()
-            for i in range(self.D[di]):
-                for j in range(i + 1, self.D[di]):
-                    G.add_edge(i, j, weight=simMatrix[di][i][j])
-            if len(G.nodes) > 1:
-                ut_value, partition = nx.stoer_wagner(G)
-                partitions.append(partition)
-                cut_values.append(ut_value)
-                cut_values_normal.append(ut_value / self.D[di])
-            else:
-                partitions.append([[0], [0]])
-                cut_values.append(10000000)
-                cut_values_normal.append(10000000)
-
-        return partitions, cut_values, cut_values_normal
+            
+    def _init_hash(self) -> None:
+        raise NotImplementedError()
 
     def hamming_distance(self, x, y) -> float:
         ans = 0

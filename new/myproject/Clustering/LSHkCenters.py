@@ -19,20 +19,12 @@ class LSHkCenters(BaseFuzzyClustering):
     ) -> None:
         super().__init__(*args, **kwargs)
 
-        # start = timeit.default_timer()
-
         self.lsh = LSH(
             X=self.X,
             y=self.y,
             hbits=hbits,
             measure_name=measure_name,
         )
-        self.lsh.do_hash()
-
-        # self.time_lsh = timeit.default_timer() - start
-
-        # self.AddVariableToPrint("Time_lsh", self.time_lsh)
-        # return self.time_lsh
 
     # Core Clustering Logic
     def do_cluster(self):

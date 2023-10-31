@@ -1,7 +1,5 @@
 from .BaseMeasure import BaseMeasure
 
-from typing import Dict, Tuple, List
-
 import numpy as np
 import scipy.stats as st
 
@@ -17,25 +15,25 @@ class DILCA(BaseMeasure):
     # Distance Matrices
     # ==========================
 
-    def _init_dist_matrices(self) -> None:
+    def _init_distance_matrices(self) -> None:
         """
         Initialize distance matrices for all attributes based on SU values.
         """
         print("X\n", self._X)
 
         # Dictionaries to store probabilities.
-        self._x_probabilities: Dict[Tuple[int, int], np.ndarray] = {}
-        self._y_probabilities: Dict[Tuple[int, int], np.ndarray] = {}
-        self._conditional_probabilities: Dict[Tuple[int, int], np.ndarray] = {}
+        self._x_probabilities: dict[tuple[int, int], np.ndarray] = {}
+        self._y_probabilities: dict[tuple[int, int], np.ndarray] = {}
+        self._conditional_probabilities: dict[tuple[int, int], np.ndarray] = {}
         self._init_probabilities()
 
         SU_matrix = self._compute_correlation_matrix()
         print("SU_matrix\n", SU_matrix)
 
-        dist_matrices = self._DILCA_M(SU_matrix)
-        print("dist_matrices\n", dist_matrices)
+        distance_matrices = self._DILCA_M(SU_matrix)
+        print("distance_matrices\n", distance_matrices)
 
-        self._dist_matrices = dist_matrices
+        self._distance_matrices = distance_matrices
 
     def _compute_correlation_matrix(self) -> np.ndarray:
         """
@@ -94,7 +92,7 @@ class DILCA(BaseMeasure):
         """
         raise NotImplementedError()
 
-    def _DILCA_M(self, SU_matrix: np.ndarray, sigma: float = 1.0) -> List[np.ndarray]:
+    def _DILCA_M(self, SU_matrix: np.ndarray, sigma: float = 1.0) -> list[np.ndarray]:
         """
         Compute DILCA_M distance matrices for all attributes.
 
@@ -106,11 +104,11 @@ class DILCA(BaseMeasure):
             list: List of distance matrices.
         """
         # calculate DILCA_M for each attribute
-        dist_matrices = [
+        distance_matrices = [
             self._DILCA_M_helper(SU_matrix[:, i], i, sigma) for i in range(self._d)
         ]
 
-        return dist_matrices
+        return distance_matrices
 
     def _DILCA_M_helper(
         self, SU_vector_Y: np.ndarray, Y_i: int, sigma: float
