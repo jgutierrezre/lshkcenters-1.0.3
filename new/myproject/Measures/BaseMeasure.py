@@ -1,6 +1,6 @@
 from .MeasureManager import MeasureManager
 
-from typing import Union, List
+from typing import Union
 
 import numpy as np
 
@@ -28,11 +28,15 @@ class BaseMeasure:
         self._D = np.apply_along_axis(lambda x: len(np.unique(x)), 0, self._X)
 
         # List to store distance matrices.
-        self._distance_matrices: Union[List[np.ndarray], None] = None
-        self._similarity_matrices: Union[List[np.ndarray], None] = None
+        self._distance_matrices: Union[list[np.ndarray], None] = None
+        self._similarity_matrices: Union[list[np.ndarray], None] = None
 
         # Initialize similarity matrices.
         self._init_distance_matrices()
+        # If every distance is 0, then this dataset cannot be clustered.
+        if self._distance_matrices is not None:
+            if all(np.all(matrix == 0) for matrix in self._distance_matrices):
+                raise ValueError("Every distance is 0. This dataset cannot be clustered.")
         self._init_similarity_matrices()
 
     def _check_args(self, X: np.ndarray, y: np.ndarray) -> None:
@@ -89,12 +93,12 @@ class BaseMeasure:
 
             self._similarity_matrices.append(sim_matrix)
 
-    def get_similarity_matrices(self) -> List[np.ndarray]:
+    def get_similarity_matrices(self) -> list[np.ndarray]:
         """
         Returns the similarity matrices.
 
         Returns:
-            List[np.ndarray]: List of similarity matrices.
+            list[np.ndarray]: List of similarity matrices.
 
         Raises:
             ValueError: If similarity matrices have not been generated yet.

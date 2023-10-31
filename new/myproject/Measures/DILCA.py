@@ -20,6 +20,7 @@ class DILCA(BaseMeasure):
         Initialize distance matrices for all attributes based on SU values.
         """
         print("X\n", self._X)
+        print("y\n", self._y)
 
         # Dictionaries to store probabilities.
         self._x_probabilities: dict[tuple[int, int], np.ndarray] = {}
