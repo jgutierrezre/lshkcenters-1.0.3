@@ -11,6 +11,13 @@ class BaseMeasure:
         X: np.ndarray,
         y: np.ndarray,
     ) -> None:
+        """
+        Initializes the BaseMeasure object.
+
+        Args:
+            X (np.ndarray): Data matrix.
+            y (np.ndarray): Labels.
+        """
         self._check_args(X, y)
 
         self._X = X
@@ -29,6 +36,15 @@ class BaseMeasure:
         self._init_similarity_matrices()
 
     def _check_args(self, X: np.ndarray, y: np.ndarray) -> None:
+        """
+        Check if the arguments are valid.
+
+        Raises:
+            ValueError: If X is empty.
+            ValueError: If y is empty.
+            ValueError: If X and y have different lengths.
+            ValueError: If y has more than one row.
+        """
         if X.size == 0:
             raise ValueError("X must not be empty.")
 
@@ -42,9 +58,21 @@ class BaseMeasure:
             raise ValueError("y must have only one row.")
 
     def _init_distance_matrices(self) -> None:
+        """
+        Abstract method to initialize the distance matrices.
+
+        Raises:
+            NotImplementedError: If the method is not implemented in the subclass.
+        """
         raise NotImplementedError()
 
     def _init_similarity_matrices(self) -> None:
+        """
+        Initialize similarity matrices for all attributes based on distance matrices.
+
+        Raises:
+            ValueError: If distance matrices have not been generated yet.
+        """
         if self._distance_matrices is None:
             raise ValueError("Distance matrices have not been generated yet.")
 
@@ -62,6 +90,15 @@ class BaseMeasure:
             self._similarity_matrices.append(sim_matrix)
 
     def get_similarity_matrices(self) -> List[np.ndarray]:
+        """
+        Returns the similarity matrices.
+
+        Returns:
+            List[np.ndarray]: List of similarity matrices.
+
+        Raises:
+            ValueError: If similarity matrices have not been generated yet.
+        """
         if self._similarity_matrices is None:
-            raise ValueError("Distance matrices have not been generated yet.")
+            raise ValueError("Similarity matrices have not been generated yet.")
         return self._similarity_matrices

@@ -12,34 +12,31 @@ class BaseHashing:
         self,
         X: np.ndarray,
         y: np.ndarray,
-        n: Union[None, int] = None,
-        d: Union[None, int] = None,
-        D: Union[None, np.ndarray] = None,
         n_init: int = 10,
         hbits: Union[None, int] = None,
         k: Union[None, int] = None,
         measure_name: str = "DILCA",
     ) -> None:
+        """
+        Initializes the BaseHashing object.
+
+        Args:
+            X (np.ndarray): Data matrix.
+            y (np.ndarray): Labels.
+            n_init (int): Number of iterations.
+            hbits (Union[None, int]): Number of hash bits.
+            k (Union[None, int]): Number of clusters.
+            measure_name (str): Name of the measure.
+        """
         self._check_args(X, y, n_init, hbits, k, measure_name)
 
         self.X = X
         self.y = y
         self.n_init = n_init
 
-        if n is None:
-            self.n = self.X.shape[0]
-        else:
-            self.n = n
-
-        if d is None:
-            self.d = self.X.shape[1]
-        else:
-            self.d = d
-
-        if D is None:
-            self.D = np.apply_along_axis(lambda x: len(np.unique(x)), 0, self.X)
-        else:
-            self.D = D
+        self.n = self.X.shape[0]
+        self.d = self.X.shape[1]
+        self.D = np.apply_along_axis(lambda x: len(np.unique(x)), 0, self.X)
 
         if k is None:
             self.k = len(np.unique(y))
@@ -60,7 +57,6 @@ class BaseHashing:
         self.measure = self._load_measure(measure_name)
 
         self._hash_table: Union[dict, None] = None
-        self._hash_values: Union[list, None] = None
 
         self._init_hash()
 
@@ -73,6 +69,19 @@ class BaseHashing:
         k: Union[None, int],
         measure_name: str,
     ) -> None:
+        """
+        Check if the arguments are valid.
+
+        Raises:
+            ValueError: If X is empty.
+            ValueError: If y is empty.
+            ValueError: If X and y have different number of rows.
+            ValueError: If y has more than one row.
+            ValueError: If n_init is less than or equal to 0.
+            ValueError: If hbits is less than or equal to 0.
+            ValueError: If k is less than or equal to 0.
+            ValueError: If the measure is not found.
+        """
         if X.size == 0:
             raise ValueError("X must not be empty.")
 
@@ -98,6 +107,19 @@ class BaseHashing:
             raise ValueError(f"Measure '{measure_name}' not found!")
 
     def _load_measure(self, measure_name: str) -> BaseMeasure:
+        """
+        Load the measure class from the Measures package.
+
+        Args:
+            measure_name (str): Name of the measure.
+
+        Returns:
+            BaseMeasure: Measure class.
+
+        Raises:
+            ValueError: If the measure is not found.
+            ValueError: If the class is not found in the module.
+        """
         try:
             module = importlib.import_module(f"..Measures.{measure_name}", __package__)
             measure_class = getattr(module, measure_name)
@@ -110,22 +132,44 @@ class BaseHashing:
             )
 
     def _init_hash(self) -> None:
+        """
+        Abstract method to initialize the hash table.
+
+        Raises:
+            NotImplementedError: If the method is not implemented in the subclass.
+        """
         raise NotImplementedError()
 
-    def hamming_distance(self, x, y) -> float:
-        ans = 0
-        for i in range(31, -1, -1):
-            b1 = x >> i & 1
-            b2 = y >> i & 1
-            ans += not (b1 == b2)
-        return ans
+    def hamming_distance(self, x: int, y: int) -> int:
+        """
+        Calculate the Hamming distance between two integers.
+
+        Args:
+            x (int): First integer.
+            y (int): Second integer.
+
+        Returns:
+            int: Hamming distance between x and y.
+        """
+        xor_result = x ^ y
+        distance = 0
+
+        while xor_result:
+            distance += xor_result & 1
+            xor_result >>= 1
+
+        return distance
 
     def get_hash_table(self) -> dict:
+        """
+        Returns the hash table.
+
+        Returns:
+            dict: Hash table.
+
+        Raises:
+            ValueError: If the hash table is not generated yet.
+        """
         if self._hash_table is None:
             raise ValueError("Hash table not generated yet!")
         return self._hash_table
-
-    def get_hash_values(self) -> list:
-        if self._hash_values is None:
-            raise ValueError("Hash values not generated yet!")
-        return self._hash_values

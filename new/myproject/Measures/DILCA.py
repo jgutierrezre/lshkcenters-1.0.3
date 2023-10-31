@@ -7,7 +7,7 @@ import scipy.stats as st
 class DILCA(BaseMeasure):
     def __init__(self, *args, **kwargs) -> None:
         """
-        Initializes the DILCA object and computes initial probabilities.
+        Initializes the DILCA object.
         """
         super().__init__(*args, **kwargs)
 
@@ -98,7 +98,7 @@ class DILCA(BaseMeasure):
         """
         (Placeholder for DILCA_RR implementation.)
         Compute DILCA_RR distance matrices for all attributes.
-        
+
         Args:
             SU_matrix (np.ndarray): Symmetrical Uncertainty matrix.
 
