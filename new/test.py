@@ -17,14 +17,14 @@ np.set_printoptions(threshold=sys.maxsize)
 # )
 # y = np.array([0, 0, 1])
 
-# 1. Soybean-small
+# # 1. Soybean-small
 
-data = pd.read_csv("new/datasets/soybean-small.data.csv", header=None)
-data = data.apply(lambda col: pd.factorize(col)[0])
+# data = pd.read_csv("new/datasets/soybean-small.data.csv", header=None)
+# data = data.apply(lambda col: pd.factorize(col)[0])
 
-X = data.iloc[:, :-1].values
-y = data.iloc[:, -1].values
-y = np.unique(y, return_inverse=True)[1]
+# X = data.iloc[:, :-1].values
+# y = data.iloc[:, -1].values
+# y = np.unique(y, return_inverse=True)[1]
 
 # 2. Balance Scale
 
@@ -43,6 +43,14 @@ y = np.unique(y, return_inverse=True)[1]
 # X = data.iloc[:, 1:].values
 # y = data.iloc[:, 0].values
 # y = np.unique(y, return_inverse=True)[1]
+
+# 3. Soybean-large
+data = pd.read_csv("new/datasets/soybean+large/soybean-large.data", header=None)
+data = data.apply(lambda col: pd.factorize(col)[0])
+
+X = data.iloc[:, 1:].values
+y = data.iloc[:, 0].values
+y = np.unique(y, return_inverse=True)[1] # type: ignore
 
 
 kcens = LSHkCenters(X, y)
